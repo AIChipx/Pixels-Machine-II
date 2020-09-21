@@ -1,10 +1,18 @@
-//abdo 
-module pc(addr , data_in , we ,clk);
-parameter N=8;
-output reg [N-1:0] addr;
-input[N-1:0] data_in;
-input we ,clk;
-always@(posedge clk)
-if(we)
-addr=data_in+1;
+module pc
+#(parameter WIDTH=8)
+(
+	input clk, enable, reset,
+	output reg [WIDTH-1:0] addr
+);
+
+	// Reset if needed, or increment if counting is enabled
+	always @ (posedge clk or posedge reset)
+	begin
+		if (reset)
+			addr <= 0;
+		else if (enable == 1'b1)
+			addr <= count + 1;
+	end
+
 endmodule
+

@@ -1,15 +1,30 @@
-//abdo
-module instruction_mem ( data_out , addr ,data_in , we , clk);
-parameter N = 8;
-parameter M = 60;
-output reg [M-1:0] data_out;
-input [N-1:0] addr;
-input [M-1:0] data_in;
-input we, clk;
-reg [M-1:0] mem [0:2**N-1] ;
-always @(posedge clk) 
-if (we) 
-mem[addr] = data_in;
-else
- data_out = mem[addr] ;
+module instruction_mem 
+#(parameter DATA_WIDTH=60, parameter ADDR_WIDTH=8)
+(
+	input [(DATA_WIDTH-1):0] data_in,
+	input [(ADDR_WIDTH-1):0] addr,
+	input we, clk,
+	output [(DATA_WIDTH-1):0] data_out
+);
+
+	// Declare the RAM variable
+	reg [DATA_WIDTH-1:0] ram[2**ADDR_WIDTH-1:0];
+
+	// Variable to hold the registered read address
+	reg [ADDR_WIDTH-1:0] addr_reg;
+
+	always @ (posedge clk)
+	begin
+		// Write
+		if (we)
+			ram[addr] <= data_in;
+
+		addr_reg <= addr;
+	end
+
+	// Continuous assignment implies read returns NEW data.
+	// This is the natural behavior of the TriMatrix memory
+	// blocks in Single Port mode.  
+	assign data_out = ram[addr_reg];
+
 endmodule
