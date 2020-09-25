@@ -11,7 +11,7 @@ module pc
 		if (reset)
 			addr <= 0;
 		else if (enable == 1'b1)
-			addr <= count + 1;
+			addr <= addr + 1;
 	end
 
 endmodule
