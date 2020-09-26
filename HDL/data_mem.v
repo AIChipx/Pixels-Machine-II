@@ -13,7 +13,7 @@ reg [data_w-1:0] d_mem [2**addr_w-1:0] ;
 always@ (posedge clk)
 begin
  if (we) 
-   d_mem[addr] <= data_in ;
+		d_mem[addr] <= data_in ;
   
  addr_reg <= addr ;
 end
