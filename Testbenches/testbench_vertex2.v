@@ -1,11 +1,10 @@
-//vertex_processor
-module vertex_processor (clk,enable,reset,we_ins_m,addr_ins_m,din_ins_m);
+module testbench_vertex2 ();
 	parameter pc_ins_addr_w=8,ins_data_w=60,data_bus_w=128,
 	          op_code_w=3,operands_w=4,adder_w=32;
 	
-	input clk,enable,reset,we_ins_m;
-	input [pc_ins_addr_w-1:0]addr_ins_m;
-	input [ins_data_w-1:0]din_ins_m;
+	reg clk,enable,reset,we_ins_m;
+	reg [pc_ins_addr_w-1:0]addr_ins_m;
+	reg [ins_data_w-1:0]din_ins_m;
 	
 	
 	wire we_a_vregf,we_b_vregf,we_dmem,mux0_dest,mux1_src2,mux2_alu_out,mux3_src1;
@@ -28,7 +27,7 @@ module vertex_processor (clk,enable,reset,we_ins_m,addr_ins_m,din_ins_m);
 	assign adders_out = {96'b0,adder3_out};
 	
 //blocks	
-pc pc0 (clk,enable,reset,pc_ins_addr);
+//pc pc0 (clk,enable,reset,pc_ins_addr);
 	
 instruction_mem ins_mem0 (clk,we_ins_m,pc_ins_addr,din_ins_m,ins_data);
 	
@@ -63,5 +62,36 @@ adder adder3 (adder1_out,adder2_out,adder3_out);
 mux2_1 #(128) mux2 (data_in_a_vregf,adders_out,alu_out,mux2_alu_out);
 
 data_mem d_mem0 (clk,we_dmem,alu_out[7:0],data_out_b_vregf,data_in_b_vregf);
+
+//data_for_test
+initial
+begin
+	clk=0;
+	addr_ins_m=0; 
+end
+
+always
+begin
+	#50
+	clk=~clk;	
+end
+	
+always 
+begin  
+	#100 
+	addr_ins_m=addr_ins_m+1;
+end
+
+initial
+begin
+$monitor("[%d][%b%b%b%b%b%b%b] [%h] [%h] [%h]",op_code,we_a_vregf,we_b_vregf,we_dmem,
+                              mux0_dest,mux1_src2,mux2_alu_out,mux3_src1,
+							         data_out_a_vregf,data_out_b_vregf,data_in_a_vregf);
+/*		  addr_ins_m=8'd0;
+	#100 addr_ins_m=8'd1;
+	#100 addr_ins_m=8'd2;
+	#100 addr_ins_m=8'd3;
+	#100 addr_ins_m=8'd4;  */
+end 
 
 endmodule 
