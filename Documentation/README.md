@@ -1,3 +1,3 @@
-# Vector processor Notes
+# Project documentation
 
 
